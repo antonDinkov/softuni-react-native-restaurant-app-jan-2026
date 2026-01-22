@@ -5,6 +5,7 @@ import Button from "../components/Button";
 
 export default function DetailsScreen({
     route,
+    navigation,
 }) {
     const { itemId } = route.params;
 
@@ -43,14 +44,14 @@ export default function DetailsScreen({
                         <Button
                             title="Add to Cart"
                             style={styles.addButton}
-                        // todo add onPress handler
+                            // todo add onPress handler
                         />
                         <Button
                             title="View Cart"
                             variant="outline"
                             style={styles.viewCartButton}
-                        // todo add onPress handler
-
+                            // todo add onPress handler
+                            onPress={() =>navigation.navigate('Cart')}
                         />
                     </View>
                 </View>
