@@ -5,10 +5,14 @@ import Card from '../components/Card';
 import { categories } from '../data/categoriesData';
 import CategoryCard from '../components/CategoryCard';
 
-export default function HomeScreen({navigation}) {
+export default function HomeScreen({ navigation }) {
     const categoryPressHandler = (categoryId) => {
         navigation.navigate('Category', { categoryId });
     };
+
+    const itemPressHandler = (itemId) => {
+        navigation.navigate('Details', { itemId });
+    }
 
     return (
         <ScrollView>
@@ -28,7 +32,10 @@ export default function HomeScreen({navigation}) {
                 <ScrollView horizontal style={styles.featuredList}>
                     {featuredItems.map((item) => (
                         <View key={item.id} style={styles.featuredCard}>
-                            <Card {...item} />
+                            <Card
+                                {...item}
+                                onPress={itemPressHandler}
+                            />
                         </View>
                     ))}
                 </ScrollView>
