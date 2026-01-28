@@ -40,10 +40,26 @@ export default function CartProvider({
         }));
     };
 
+    const increaseQuantity = (index) => {
+        setState((oldState) => ({
+            items: oldState.items.map((item, i) => i === index ? { meal: item.meal, quantity: item.quantity + 1 } : item),
+            total: oldState.total + 1,
+        }));
+    };
+
+    const decreaseQuantity = (index) => {
+        setState((oldState) => ({
+            items: oldState.items.map((item, i) => i === index ? { meal: item.meal, quantity: item.quantity - 1 } : item),
+            total: oldState.total - 1,
+        }));
+    };
+
     const data = {
         items: state.items,
         total: state.total,
-        addToCart
+        addToCart,
+        increaseQuantity,
+        decreaseQuantity,
     };
 
     return (
