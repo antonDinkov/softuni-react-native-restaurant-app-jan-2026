@@ -1,13 +1,14 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { featuredItems, getItemsByCategory } from '../data/menuItems';
+import { getItemsByCategory } from '../data/menuItems';
 import Card from '../components/Card';
 import CategoryCard from '../components/CategoryCard';
 import { useEffect, useState } from 'react';
-import { categoryApi } from '../api';
+import { categoryApi, mealApi } from '../api';
 
 export default function HomeScreen({ navigation }) {
     const [categories, setCategories] = useState([]);
+    const [featured, setFeatured]= useState([]);
 
     useEffect(() => {
         categoryApi.getAll()
@@ -16,7 +17,11 @@ export default function HomeScreen({ navigation }) {
             })
             .catch(err => {
                 alert('Cannot load categories');
-            })
+            });
+
+        mealApi.getFeatured()
+            .then(result => setFeatured(result.data))
+            .catch(err => alert('Cannot get featured'));
     }, []);
 
     const categoryPressHandler = (categoryId) => {
@@ -43,7 +48,7 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Featured Items</Text>
                 <ScrollView horizontal style={styles.featuredList}>
-                    {featuredItems.map((item) => (
+                    {featured.map((item) => (
                         <View key={item.id} style={styles.featuredCard}>
                             <Card
                                 {...item}

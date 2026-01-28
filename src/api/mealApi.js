@@ -10,5 +10,9 @@ export function getAllByCategoryId(categoryId) {
     }
 
     return api.get(`/meals?categoryId=${categoryId}`);
-
 }
+
+export function getFeatured() {
+    return api.get('/meals?featured=true');
+}
+
