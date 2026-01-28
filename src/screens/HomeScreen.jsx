@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { getItemsByCategory } from '../data/menuItems';
 import Card from '../components/Card';
@@ -8,21 +8,28 @@ import { categoryApi, mealApi } from '../api';
 
 export default function HomeScreen({ navigation }) {
     const [categories, setCategories] = useState([]);
-    const [featured, setFeatured]= useState([]);
+    const [featured, setFeatured] = useState([]);
+
+    const [toggleRefresh, setToggleRefresh] = useState(false);
+    const [refreshing, setRefreshing] = useState(true);
 
     useEffect(() => {
-        categoryApi.getAll()
-            .then(result => {
-                setCategories(result.data);
-            })
-            .catch(err => {
-                alert('Cannot load categories');
-            });
+        async function fetchData() {
+            setRefreshing(true);
+            try {
+                const categoryResult = await categoryApi.getAll();
+                setCategories(categoryResult.data);
+                const featuredResult = await mealApi.getFeatured();
+                setFeatured(featuredResult.data)
+            } catch (err) {
+                alert('Cannot load data');
+            } finally {
+                setRefreshing(false);
+            }
+        }
 
-        mealApi.getFeatured()
-            .then(result => setFeatured(result.data))
-            .catch(err => alert('Cannot get featured'));
-    }, []);
+        fetchData();
+    }, [toggleRefresh]);
 
     const categoryPressHandler = (categoryId) => {
         navigation.navigate('Category', { categoryId });
@@ -30,10 +37,16 @@ export default function HomeScreen({ navigation }) {
 
     const itemPressHandler = (itemId) => {
         navigation.navigate('Details', { itemId });
-    }
+    };
+
+    const refreshHandler = () => {
+        setToggleRefresh(state => !state);
+    };
 
     return (
-        <ScrollView>
+        <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+        >
             <View style={styles.header}>
                 <Text style={styles.restaurantName}>Tasty Bites</Text>
                 <View style={styles.headerInfo}>
