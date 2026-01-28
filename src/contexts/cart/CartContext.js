@@ -1,7 +1,17 @@
 import { createContext, useContext } from "react";
 
-export const CartConetxt = createContext();
+export const CartConetxt = createContext({
+    items: [],
+    total: 0,
+    addToCart(meal, quantity) {},
+});
 
 export function useCartContext() {
-    return useContext(CartConetxt);
+    const context = useContext(CartConetxt);
+
+    if (!context) {
+        throw new Error("useCartContext must be used within a CartProvider");
+    }
+
+    return context;
 }
