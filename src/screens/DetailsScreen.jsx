@@ -51,7 +51,7 @@ export default function DetailsScreen({
                             variant="outline"
                             style={styles.viewCartButton}
                             // todo add onPress handler
-                            onPress={() =>navigation.navigate('Cart')}
+                            onPress={() =>navigation.navigate('CartModal')}
                         />
                     </View>
                 </View>

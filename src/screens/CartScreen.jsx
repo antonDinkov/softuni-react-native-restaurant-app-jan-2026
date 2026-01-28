@@ -1,18 +1,18 @@
-import { useState } from 'react';
-
 import { View, Text, StyleSheet } from 'react-native';
-import { featuredItems } from '../data/menuItems';
 import CartItem from '../components/CartItem';
+import { useCartContext } from '../contexts/cart/CartContext';
 
 export default function CartScreen() {
-    const [cartItems, setCartItems] = useState(() => {
-        return featuredItems.map(item => ({ ...item, quantity: 2 }));
-    });
+    const { items } = useCartContext();
 
     return (
         <View style={styles.container}>
-            {cartItems.map(item => (
-                <CartItem key={item.id} {...item} />
+            {items.map(item => (
+                <CartItem
+                    key={item.meal.id}
+                    quantity={item.quantity}
+                    {...item.meal}
+                />
             ))}
         </View>
     );
