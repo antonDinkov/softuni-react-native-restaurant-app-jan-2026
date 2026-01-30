@@ -1,21 +1,52 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { featuredItems, getItemsByCategory } from '../data/menuItems';
+import { getItemsByCategory } from '../data/menuItems';
 import Card from '../components/Card';
-import { categories } from '../data/categoriesData';
 import CategoryCard from '../components/CategoryCard';
+import { useEffect, useState } from 'react';
+import { categoryApi, mealApi } from '../api';
 
 export default function HomeScreen({ navigation }) {
+    const [categories, setCategories] = useState([]);
+    const [featured, setFeatured] = useState([]);
+
+    const [toggleRefresh, setToggleRefresh] = useState(false);
+    const [refreshing, setRefreshing] = useState(true);
+
+    useEffect(() => {
+        async function fetchData() {
+            setRefreshing(true);
+            try {
+                const categoryResult = await categoryApi.getAll();
+                setCategories(categoryResult.data);
+                const featuredResult = await mealApi.getFeatured();
+                setFeatured(featuredResult.data)
+            } catch (err) {
+                alert('Cannot load data');
+            } finally {
+                setRefreshing(false);
+            }
+        }
+
+        fetchData();
+    }, [toggleRefresh]);
+
     const categoryPressHandler = (categoryId) => {
         navigation.navigate('Category', { categoryId });
     };
 
     const itemPressHandler = (itemId) => {
         navigation.navigate('Details', { itemId });
-    }
+    };
+
+    const refreshHandler = () => {
+        setToggleRefresh(state => !state);
+    };
 
     return (
-        <ScrollView>
+        <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshHandler} />}
+        >
             <View style={styles.header}>
                 <Text style={styles.restaurantName}>Tasty Bites</Text>
                 <View style={styles.headerInfo}>
@@ -30,7 +61,7 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Featured Items</Text>
                 <ScrollView horizontal style={styles.featuredList}>
-                    {featuredItems.map((item) => (
+                    {featured.map((item) => (
                         <View key={item.id} style={styles.featuredCard}>
                             <Card
                                 {...item}
